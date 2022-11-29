@@ -1,0 +1,14 @@
+{
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "checked": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "description",
+    "checked"
+  ]
+}
