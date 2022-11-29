@@ -13,19 +13,6 @@ FLAG_EXIT = False
 
 todos = []
 
-def validate_json_format(file_handle: str) -> bool:
-
-
-def validate_file_by_schema(file_handle: str) -> bool:
-    try:
-        validate(instance = file_handle, schema = )
-    
-    except jsonschema.exceptions.ValidationError:
-        print("Provided .json file did not follow format enforcement by the schema.\nSee schema.json for correct format.")
-        return False
-
-    return True
-
 while FLAG_EXIT == False:
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -61,16 +48,25 @@ while FLAG_EXIT == False:
 
             for todo in todos:
                 print("[X]" if todo["checked"] else "[ ]", todo["description"])
+
             input("Press anything to continue.")
         
         case "add":
             todo_description = input("Todo description > ")
-            todos.append({
-                "description": todo_description,
-                "checked": False
-            })
 
-            input("Press anything to continue.")
+            if not any(todo["description"] == todo_description for todo in todos):
+                todos.append({
+                    "description": todo_description,
+                    "checked": False
+                })
+
+                print("Task successfully added to list.")
+                input("Press anything to continue")
+
+            else:
+                print("Task of given description already exists in list.")
+                input("Press anything to continue")
+                continue
         
         case "check":
             """
@@ -158,7 +154,19 @@ while FLAG_EXIT == False:
             Format:
                 {"description": "", "checked": Boolean}
             """
-            pass
+            file_handle = input("Enter file name: ")
+
+            #with open(file_handle) as f
+
+            #if !validate_json_file(file_handle):
+                #print("Provided .json file is not a valid file.")
+                #input("Press anything to continue")
+                #continue
+
+            #if !validate_file_by_schema(file_handle):
+                #print("Provided .json file did not follow format enforcement by the schema.\nSee schema.json for correct format.")
+                #input("Press anything to continue")
+                #continue
 
         case _:
             print(f"Invalid option '{user_input}' selected.")
