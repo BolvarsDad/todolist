@@ -1,10 +1,3 @@
-# DVA128 Case 2
-# Grupp 6:
-#   Sinan Pasic,
-#   Jasmine Pedersen,
-#   Karl Sorsell
-#   Karam Al-Saudi
-
 import os
 import json
 from jsonschema import validate
