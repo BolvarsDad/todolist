@@ -139,11 +139,11 @@ while FLAG_EXIT == False:
             Saves the dictionary objects in todos to a .json file.
             """
 
+            # No exception-handling required.
             # If the tasks were imported from a .json file then they've already been validated.
             # If they were generated through program logic they're already in the correct format for exportation.
             with open('todo_data.json', 'w') as handle:
-                for todo in todos:
-                    json.dump(todo, handle)
+                json.dump(todos, handle)
 
             print("Tasks successfully saved to 'todo_data.json'")
             input("Press anything to continue.")
@@ -156,16 +156,21 @@ while FLAG_EXIT == False:
             Each call of the load function overwrites the previous existance of todo_data.json
             """
             try:
-                json_file_handle = input("Enter file name: ")
-                schema = json.loads("schema.json")
+                filename = input("Enter file name: ")
 
-                with open(json_file_handle, 'r') as file:
-                    todo = [json.loads(line) for line in file]
+                if not validate_json(filename, schema):
+                    print("not valid")
+                    input()
+                    continue
+
+                with open(filename, 'r') as handle:
+                    todo = [json.loads(line) for line in handle]
+                    print(todo)
 
                 todos.append(todo)
 
             except OSError:
-                print("Provided file name was nnot found in CWD.")
+                print("Provided file name was not found in CWD.")
                 input("Press anything to continue")
                 continue
 

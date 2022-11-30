@@ -1,1 +1,1 @@
-{"description": "thing1", "checked": false}{"description": "thing2", "checked": true}{"description": "thing3", "checked": false}
+[{"description": "thing1", "checked": false}, {"description": "thing2", "checked": false}]
