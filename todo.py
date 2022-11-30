@@ -6,18 +6,6 @@ FLAG_EXIT = False
 
 todos = []
 
-# Since the schema it's validating against is a valid .json file,
-# failure validating against the schema will catch both invalidly formatted input
-# data and invalid files.
-def validate_json(json_file_handle, data_schema):
-    try:
-        validate(instance = json_file_handle, schema = data_schema)
-
-    except jsonschema.exceptions.ValidationError:
-        return False
-
-    return True
-
 while FLAG_EXIT == False:
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -137,6 +125,7 @@ while FLAG_EXIT == False:
         case "save":
             """
             Saves the dictionary objects in todos to a .json file.
+            Format: [{'description': '', 'checked': boolean}, ...]
             """
 
             # No exception-handling required.
@@ -152,31 +141,17 @@ while FLAG_EXIT == False:
             """
             Reads a .json file of dictionary objects with attributes 'description: str' and 'checked: bool'
             into the todos list structure.
-            Given a file of incorrect format or extension, an error is raised.
-            Each call of the load function overwrites the previous existance of todo_data.json
+            Items are placed 
             """
-            try:
-                filename = input("Enter file name: ")
+            filename = input("Enter file name: ")
 
-                if not validate_json(filename, schema):
-                    print("not valid")
-                    input()
-                    continue
+            with open(filename) as handle:
+                items = json.load(handle)
 
-                with open(filename, 'r') as handle:
-                    todo = [json.loads(line) for line in handle]
-                    print(todo)
-
+            for todo in items:
                 todos.append(todo)
 
-            except OSError:
-                print("Provided file name was not found in CWD.")
-                input("Press anything to continue")
-                continue
 
-            else:
-                print("Success loading json data into todo list!")
-                input("Press anything to continue")
 
         case _:
             print(f"Invalid option '{user_input}' selected.")
