@@ -156,6 +156,8 @@ while FLAG_EXIT == False:
                 
             else:
                 todos += tasks
+                print("Tasks successfully loaded into list.")
+                input("Press anything to continue")
 
 
 
