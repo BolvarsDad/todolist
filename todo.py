@@ -1,10 +1,3 @@
-# DVA128 Case 2
-# Grupp 6:
-#   Sinan Pasic,
-#   Jasmine Pedersen,
-#   Karl Sorsell
-#   Karam Al-Saudi
-
 import os
 import json
 from jsonschema import validate
@@ -12,6 +5,18 @@ from jsonschema import validate
 FLAG_EXIT = False
 
 todos = []
+
+# Since the schema it's validating against is a valid .json file,
+# failure validating against the schema will catch both invalidly formatted input
+# data and invalid files.
+def validate_json(json_file_handle, data_schema):
+    try:
+        validate(instance = json_file_handle, schema = data_schema)
+
+    except jsonschema.exceptions.ValidationError:
+        return False
+
+    return True
 
 while FLAG_EXIT == False:
     os.system("cls" if os.name == "nt" else "clear")
@@ -50,7 +55,7 @@ while FLAG_EXIT == False:
                 print("[X]" if todo["checked"] else "[ ]", todo["description"])
 
             input("Press anything to continue.")
-        
+
         case "add":
             todo_description = input("Todo description > ")
 
@@ -66,8 +71,7 @@ while FLAG_EXIT == False:
             else:
                 print("Task of given description already exists in list.")
                 input("Press anything to continue")
-                continue
-        
+
         case "check":
             """
             Overview: Applies boolean negation of a todo dictionary object's 'checked' attribute.
@@ -77,7 +81,7 @@ while FLAG_EXIT == False:
                 print("Nothing in the list!")
                 input("Press anything to continue.")
                 continue
-                
+
             for index, todo in enumerate(todos):
                 print(f"{index} | {'[X]' if todo['checked'] else '[ ]'} {todo['description']}")
 
@@ -114,10 +118,9 @@ while FLAG_EXIT == False:
             try:
                 todos_idx = int(input("Todo index > "))
 
-                # Pop() deletes by index, while remove() deletes by value.
-                # Pop() also returns the item which was deleted at the given index, which here is represented by a
+                # Pop() returns the item which was deleted at the given index, which here is represented by a
                 # dictionary object which can be indexed to access object attributes.
-                deleted_desc = todos.pop(todos_idx)['description']
+                todos_idx_desc = todos.pop(todos_idx)['description']
 
             except ValueError:
                 print("Invalid input type provided as idex to todo-list.")
@@ -128,7 +131,7 @@ while FLAG_EXIT == False:
                 input("Press anything to continue")
 
             else:
-                print(f"Index {index} removed from list.\nDescription: {deleted_desc}")
+                print(f"Index {todos_idx} removed from list.\nDescription: {todos_idx_desc}")
                 input("Press anything to continue")
 
         case "save":
@@ -136,12 +139,11 @@ while FLAG_EXIT == False:
             Saves the dictionary objects in todos to a .json file.
             """
 
-            # Doesn't require error-checking. If the tasks were imported from a .json file
-            # then they've already been validated, and if they were generated through program functions
-            # then they're already in the correct format for exportation.
-            with open('todo_data.json', 'w') as file_handle:
+            # If the tasks were imported from a .json file then they've already been validated.
+            # If they were generated through program logic they're already in the correct format for exportation.
+            with open('todo_data.json', 'w') as handle:
                 for todo in todos:
-                    json.dump(todo, file_handle)
+                    json.dump(todo, handle)
 
             print("Tasks successfully saved to 'todo_data.json'")
             input("Press anything to continue.")
@@ -151,22 +153,25 @@ while FLAG_EXIT == False:
             Reads a .json file of dictionary objects with attributes 'description: str' and 'checked: bool'
             into the todos list structure.
             Given a file of incorrect format or extension, an error is raised.
-            Format:
-                {"description": "", "checked": Boolean}
+            Each call of the load function overwrites the previous existance of todo_data.json
             """
-            file_handle = input("Enter file name: ")
+            try:
+                json_file_handle = input("Enter file name: ")
+                schema = json.loads("schema.json")
 
-            #with open(file_handle) as f
+                with open(json_file_handle, 'r') as file:
+                    todo = [json.loads(line) for line in file]
 
-            #if !validate_json_file(file_handle):
-                #print("Provided .json file is not a valid file.")
-                #input("Press anything to continue")
-                #continue
+                todos.append(todo)
 
-            #if !validate_file_by_schema(file_handle):
-                #print("Provided .json file did not follow format enforcement by the schema.\nSee schema.json for correct format.")
-                #input("Press anything to continue")
-                #continue
+            except OSError:
+                print("Provided file name was nnot found in CWD.")
+                input("Press anything to continue")
+                continue
+
+            else:
+                print("Success loading json data into todo list!")
+                input("Press anything to continue")
 
         case _:
             print(f"Invalid option '{user_input}' selected.")
