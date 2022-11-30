@@ -1,6 +1,5 @@
 import os
 import json
-from jsonschema import validate
 
 FLAG_EXIT = False
 
@@ -141,7 +140,7 @@ while FLAG_EXIT == False:
             """
             Reads a .json file of dictionary objects with attributes 'description: str' and 'checked: bool'
             into the todos list structure.
-            Items are placed 
+            Items are placed in FIFO order.
             """
             filename = input("Enter file name: ")
 
