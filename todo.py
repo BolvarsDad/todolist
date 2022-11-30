@@ -5,6 +5,8 @@ FLAG_EXIT = False
 
 todos = []
 
+list_empty = lambda x: isinstance(x, list) and not x
+
 while FLAG_EXIT == False:
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -33,7 +35,7 @@ while FLAG_EXIT == False:
             """
             Prints each dictionary object in the todo list as [index | status description]
             """
-            if not todos:
+            if list_empty(todos):
                 print("Nothing in the list!")
                 input("Press anything to continue.")
                 continue
@@ -45,18 +47,13 @@ while FLAG_EXIT == False:
 
         case "add":
             todo_description = input("Todo description > ")
-
-            if not any(todo["description"] == todo_description for todo in todos):
-                todos.append({
-                    "description": todo_description,
-                    "checked": False
-                })
+            
+            todos.append({
+                "description": todo_description,
+                "checked": False
+            })
 
                 print("Task successfully added to list.")
-                input("Press anything to continue")
-
-            else:
-                print("Task of given description already exists in list.")
                 input("Press anything to continue")
 
         case "check":
@@ -64,7 +61,7 @@ while FLAG_EXIT == False:
             Overview: Applies boolean negation of a todo dictionary object's 'checked' attribute.
             Edge case: Negative values behave as normally when indexing.
             """
-            if not todos:
+            if list_empty(todos):
                 print("Nothing in the list!")
                 input("Press anything to continue.")
                 continue
@@ -94,7 +91,7 @@ while FLAG_EXIT == False:
             Edge cases: Negative values behave as normally when indexing.
             Return: Return which index was deleted and its description attribute.
             """
-            if not todos:
+            if list_empty(todos):
                 print("Nothing in the list!")
                 input("Press anything to continue")
                 continue
@@ -142,13 +139,23 @@ while FLAG_EXIT == False:
             into the todos list structure.
             Items are placed in FIFO order.
             """
-            filename = input("Enter file name: ")
+            
+            try:
+                filename = input("Enter file name: ")
+                    with open(filename) as handle:
+                    tasks = json.load(handle)
 
-            with open(filename) as handle:
-                items = json.load(handle)
-
-            for todo in items:
-                todos.append(todo)
+            except FileNotFoundError:
+                print("File not found.")
+                input("Press anything to continue")
+                
+            # OSError can be too many things
+            except OSError as err:
+                print(err)
+                input("Press anything to continue")
+                
+            else:
+                todos += tasks
 
 
 
